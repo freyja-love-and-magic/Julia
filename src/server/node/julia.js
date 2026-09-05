@@ -833,6 +833,10 @@ app.post('/wand/register', async (req, res) => {
   }
 });
 
-app.listen(3000);
+if (import.meta.url === `file://${process.argv[1]}`) {
+  app.listen(3000);
 
-console.log('julia\'s ready for connections on port 3000');
+  console.log('julia\'s ready for connections on port 3000');
+}
+
+export default app;
