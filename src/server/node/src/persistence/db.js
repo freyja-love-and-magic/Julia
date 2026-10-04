@@ -1,3 +1,4 @@
+import config from '../../config/local.js';
 import { createClient } from './client.js';
 import sessionless from 'sessionless-node';
   
@@ -62,7 +63,7 @@ console.log('messages: ', parsedUser.messages);
     };
 
     await client.set(`prompt:${prompt}`, JSON.stringify(promptToAdd));
-    const promptSet = (await client.get(`prompt:${user.uuid}`)) || {};
+    const promptSet = JSON.parse((await client.get(`prompt:${user.uuid}`)) || '{}');
     promptSet[prompt] = promptToAdd;;
     await client.set(`prompt:${user.uuid}`, JSON.stringify(promptSet));
 console.log('set', `prompt:${user.uuid}`, JSON.stringify(promptSet));
@@ -86,7 +87,7 @@ console.log('no prompt');
 
     if(now - +currentPrompt.timestamp > config.promptTimeLimit) {
 console.log('timestamp isn\'t good anymore');
-      const promptSet = (await client.get(`prompt:${user.uuid}`)) || {};
+      const promptSet = JSON.parse((await client.get(`prompt:${user.uuid}`)) || '{}');
       delete promptSet[saveSignedPrompt.prompt];
       await client.set(`prompt:${user.uuid}`, JSON.stringify(promptSet));
       await client.del(`prompt:${saveSignedPrompt.prompt}`);
@@ -146,7 +147,7 @@ console.log('THE PROBLEM IS THAT newPubKey DOESN\'T EXIST');
   },
 
   removePrompt: async (user, prompt) => {
-    const promptSet = (await client.get(`prompt:${user.uuid}`)) || {};
+    const promptSet = JSON.parse((await client.get(`prompt:${user.uuid}`)) || '{}');
     delete promptSet[prompt];
     await client.set(`prompt:${user.uuid}`, JSON.stringify(promptSet));
     await client.del(`prompt:${prompt}`);   
